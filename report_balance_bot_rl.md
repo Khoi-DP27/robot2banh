@@ -220,7 +220,7 @@ Thực nghiệm được tiến hành trên môi trường mô phỏng Python 3.
 
 **Hình 4.1 — Victory Rate (%) và Mean Episode Reward theo số Episode:**
 
-![Training Convergence Curves — DQN vs PPO vs A2C](f:/ROBOT 2 Banh/saved_plots/comparison_training_curves.png)
+![Training Convergence Curves — DQN vs PPO vs A2C](./saved_plots/comparison_training_curves.png)
 
 **Nhận xét:**
 - **DQN** đạt ngưỡng 90% chỉ sau **~300 episodes** nhờ Experience Replay hiệu quả — đường cong dốc đứng và không bị dao động.
@@ -233,7 +233,7 @@ Thực nghiệm được tiến hành trên môi trường mô phỏng Python 3.
 
 **Hình 4.2 — Robot Position Trajectory x(t): Xuất phát từ x=3.2m:**
 
-![Position Trajectory Comparison x(t)](f:/ROBOT 2 Banh/saved_plots/comparison_trajectories.png)
+![Position Trajectory Comparison x(t)](./saved_plots/comparison_trajectories.png)
 
 **Nhận xét:**
 - Cả 3 thuật toán đều dẫn robot vào **Target Zone [5.25m – 6.75m]** thành công.
@@ -246,7 +246,7 @@ Thực nghiệm được tiến hành trên môi trường mô phỏng Python 3.
 
 **Hình 4.3 — Control Force F(t): Độ mượt hành động điều khiển:**
 
-![Control Force F(t) Comparison](f:/ROBOT 2 Banh/saved_plots/comparison_control_forces.png)
+![Control Force F(t) Comparison](./saved_plots/comparison_control_forces.png)
 
 **Nhận xét:**
 - **PPO** sinh lực điều khiển mượt nhất ($\sigma_F$ thấp nhất) nhờ cơ chế Clipped Surrogate tránh thay đổi chính sách đột ngột.
@@ -259,7 +259,7 @@ Thực nghiệm được tiến hành trên môi trường mô phỏng Python 3.
 
 **Hình 4.4 — Radar Chart so sánh 5 tiêu chí:**
 
-![Multi-Metric Radar Chart DQN vs PPO vs A2C](f:/ROBOT 2 Banh/saved_plots/comparison_radar_chart.png)
+![Multi-Metric Radar Chart DQN vs PPO vs A2C](./saved_plots/comparison_radar_chart.png)
 
 **Nhận xét:** Biểu đồ radar thể hiện rõ: **DQN** chiếm ưu thế tuyệt đối về Success Rate và Sample Efficiency; **PPO** vượt trội về Control Smoothness; **A2C** đứng đầu về Inference Speed (FPS).
 
@@ -269,7 +269,7 @@ Thực nghiệm được tiến hành trên môi trường mô phỏng Python 3.
 
 **Hình 4.5 — Pole Angle θ(t): Ổn định thăng bằng trong suốt demo:**
 
-![Pole Angle θ(t) Comparison — Balance Stability](f:/ROBOT 2 Banh/saved_plots/comparison_pole_angles.png)
+![Pole Angle θ(t) Comparison — Balance Stability](./saved_plots/comparison_pole_angles.png)
 
 **Bảng phân tích định lượng góc nghiêng:**
 
@@ -287,7 +287,7 @@ Thực nghiệm được tiến hành trên môi trường mô phỏng Python 3.
 
 **Hình 4.6 — Bảng tổng hợp trực quan 3 thuật toán:**
 
-![Summary Comparison Table](f:/ROBOT 2 Banh/saved_plots/comparison_summary_table.png)
+![Summary Comparison Table](./saved_plots/comparison_summary_table.png)
 
 ---
 

@@ -356,6 +356,69 @@ Inference throughput during evaluation was measured as follows:
 \subsection{Settling Time and Trajectory Stability}
 Starting from $x = 3.2\text{m}$ (Figure~\ref{fig:trajectories}), \textbf{PPO} achieved the fastest settling time ($t_s = 0.9\text{s}$) into zero-velocity hover inside the target zone, avoiding overshoot. \textbf{DQN} reached the target zone rapidly but exhibited minor spatial oscillations around $x = 6.0\text{m}$ ($t_s = 1.2\text{s}$). \textbf{A2C} stabilized within $t_s = 1.5\text{s}$. Figure~\ref{fig:radar} presents a comprehensive radar visualization summarizing all performance metrics.
 
+\subsection{Visual Demo: Navigation \& Station-Keeping Rollouts}
+Figure~\ref{fig:demo_dqn}, \ref{fig:demo_ppo}, and \ref{fig:demo_a2c} illustrate representative simulation frames extracted from recorded evaluation rollouts of each trained policy. Each row captures three key phases of the task: (1) \textit{Navigation} — robot accelerates toward the target zone from $x \approx 3.2\text{m}$; (2) \textit{Zone Entry} — robot decelerates at the zone boundary $x = 5.25\text{m}$; (3) \textit{Station-Keeping} — robot maintains upright hover inside the target zone $[5.25\text{m}, 6.75\text{m}]$ for $\geq$20 consecutive steps.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.31\linewidth}
+  \includegraphics[width=\linewidth]{saved_plots/demo_frames/dqn_nav.png}
+  \caption{Navigation}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.31\linewidth}
+  \includegraphics[width=\linewidth]{saved_plots/demo_frames/dqn_enter.png}
+  \caption{Zone Entry}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.31\linewidth}
+  \includegraphics[width=\linewidth]{saved_plots/demo_frames/dqn_hover.png}
+  \caption{Station-Keeping}
+\end{subfigure}
+\caption{DQN Demo Rollout: Navigation $\to$ Zone Entry $\to$ Station-Keeping (100\% success).}
+\label{fig:demo_dqn}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.31\linewidth}
+  \includegraphics[width=\linewidth]{saved_plots/demo_frames/ppo_nav.png}
+  \caption{Navigation}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.31\linewidth}
+  \includegraphics[width=\linewidth]{saved_plots/demo_frames/ppo_enter.png}
+  \caption{Zone Entry}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.31\linewidth}
+  \includegraphics[width=\linewidth]{saved_plots/demo_frames/ppo_hover.png}
+  \caption{Station-Keeping}
+\end{subfigure}
+\caption{PPO Demo Rollout: Smoothest control action ($\sigma_F = 3.2\text{N}$), settling time $t_s = 0.9\text{s}$.}
+\label{fig:demo_ppo}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.31\linewidth}
+  \includegraphics[width=\linewidth]{saved_plots/demo_frames/a2c_nav.png}
+  \caption{Navigation}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.31\linewidth}
+  \includegraphics[width=\linewidth]{saved_plots/demo_frames/a2c_enter.png}
+  \caption{Zone Entry}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.31\linewidth}
+  \includegraphics[width=\linewidth]{saved_plots/demo_frames/a2c_hover.png}
+  \caption{Station-Keeping}
+\end{subfigure}
+\caption{A2C Demo Rollout: Highest inference throughput ($\sim$2100 FPS), settling time $t_s = 1.5\text{s}$.}
+\label{fig:demo_a2c}
+\end{figure}
+
 \section{In-Depth Discussion \& Ablation Insights}
 
 \subsection{Value-Based vs. Policy-Gradient Paradigms}
