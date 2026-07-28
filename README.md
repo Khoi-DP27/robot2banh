@@ -11,7 +11,30 @@ Robot phải hoàn thành **bài toán kép (Dual-Objective Task)**:
 1. **Tự động di chuyển (Navigation):** Xuất phát từ vị trí ngẫu nhiên ($x \in [3.0\text{m}, 5.0\text{m}]$) trên đường đua 8.0m, lái xe tiến tới Vùng Mục Tiêu (Target Zone $[5.25\text{m}, 6.75\text{m}]$ tâm $x=6.0\text{m}$).
 2. **Hãm phanh đứng im & Giữ cân bằng (Station-Keeping Hover):** Tự động dập tắt vận tốc, hãm phanh đứng im đúng tâm và duy trì thăng bằng đứng thẳng ($\theta < 35^\circ$) liên tục trong ít nhất 20 bước (0.4 giây).
 
-![3-in-1 Combined Comparison Video](saved_videos/target_tracking_combined.gif)
+---
+
+## 🎬 Video Demo Mô Phỏng Thực Tế 3 Thuật Toán
+
+### 1. 🎥 Video Ghép 3 Tầng So Sánh Song Song (Combined 3-Panel Split Screen)
+> *Cả 3 thuật toán cùng xuất phát từ mốc $x = 3.2\text{m}$ tiến vào Target Zone tâm $x=6.0\text{m}$*
+
+![Combined 3 Algos Split Screen](saved_videos/target_tracking_combined.gif)
+
+---
+
+### 2. 🎥 Video Chi Tiết Từng Thuật Toán
+
+| 🥇 **1. DQN Policy (100% Victory Rate)** | 🥈 **2. PPO Policy (90% Victory - Smoothest)** |
+| :---: | :---: |
+| ![DQN Demo](saved_videos/target_tracking_dqn.gif) | ![PPO Demo](saved_videos/target_tracking_ppo.gif) |
+| *DQN tự động hãm phanh siêu tốc chỉ trong 0.2m train* | *PPO điều khiển lực cực kỳ êm ái $\sigma_F = 3.2\text{N}$* |
+
+<br>
+
+| 🥉 **3. A2C Policy với GAE (90% Victory - ~2100 FPS)** |
+| :---: |
+| ![A2C Demo](saved_videos/target_tracking_a2c.gif) |
+| *A2C với GAE $\lambda=0.95$ tốc độ tính toán nhanh nhất ~2100 FPS* |
 
 ---
 
@@ -103,6 +126,6 @@ python record_combined_video.py     # Xuất video ghép 3 tầng HD
 ---
 
 ## 📜 Giấy Phép & Tác Quyền
-- **Sinh viên thực hiện:** DUONG PHUC KHOI (MSSV: 23011839)
+- **Sinh viên thực hiện:** DƯƠNG PHÚC KHÔI (MSSV: 23011839)
 - **Giảng viên hướng dẫn:** ThS. Vũ Hoàng Diệu
 - **Đơn vị:** Trường Điện - Điện tử, Đại học Phenikaa.
