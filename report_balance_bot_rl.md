@@ -216,11 +216,100 @@ Thực nghiệm được tiến hành trên môi trường mô phỏng Python 3.
 =================================================================
 ```
 
-#### Phân tích chi tiết từng thuật toán:
+#### 4.3.1. Đường Cong Hội Tụ (Training Convergence Curves)
+
+**Hình 4.1 — Victory Rate (%) và Mean Episode Reward theo số Episode:**
+
+![Training Convergence Curves — DQN vs PPO vs A2C](f:/ROBOT 2 Banh/saved_plots/comparison_training_curves.png)
+
+**Nhận xét:**
+- **DQN** đạt ngưỡng 90% chỉ sau **~300 episodes** nhờ Experience Replay hiệu quả — đường cong dốc đứng và không bị dao động.
+- **A2C** hội tụ tương đối nhanh (**526 episodes**) nhờ GAE giảm phương sai, đường reward tăng đều và mượt.
+- **PPO** cần đến **2,944 episodes** do cơ chế Clipped Objective giới hạn bước cập nhật — nhưng đường cong reward ổn định nhất, không bao giờ sụt giảm đột ngột.
+
+---
+
+#### 4.3.2. Quỹ đạo Vị trí x(t) — Navigation đến Target Zone
+
+**Hình 4.2 — Robot Position Trajectory x(t): Xuất phát từ x=3.2m:**
+
+![Position Trajectory Comparison x(t)](f:/ROBOT 2 Banh/saved_plots/comparison_trajectories.png)
+
+**Nhận xét:**
+- Cả 3 thuật toán đều dẫn robot vào **Target Zone [5.25m – 6.75m]** thành công.
+- **DQN** và **PPO** hội tụ vào vùng mục tiêu và giữ ổn định rõ ràng hơn.
+- Không thuật toán nào bị "overshooting" vượt qua ranh giới zone — hàm thưởng Gaussian đã hoạt động đúng.
+
+---
+
+#### 4.3.3. Phân tích Lực Điều khiển F(t) — Độ Mượt và Chattering
+
+**Hình 4.3 — Control Force F(t): Độ mượt hành động điều khiển:**
+
+![Control Force F(t) Comparison](f:/ROBOT 2 Banh/saved_plots/comparison_control_forces.png)
+
+**Nhận xét:**
+- **PPO** sinh lực điều khiển mượt nhất ($\sigma_F$ thấp nhất) nhờ cơ chế Clipped Surrogate tránh thay đổi chính sách đột ngột.
+- **DQN** có hiện tượng "bang-bang" nhẹ do không gian hành động rời rạc 11 mức — nhưng vẫn kiểm soát được.
+- **A2C** có chattering trung bình nhưng phản hồi nhanh nhất (FPS ~2100).
+
+---
+
+#### 4.3.4. So sánh Đa Chiều (Multi-Metric Radar Chart)
+
+**Hình 4.4 — Radar Chart so sánh 5 tiêu chí:**
+
+![Multi-Metric Radar Chart DQN vs PPO vs A2C](f:/ROBOT 2 Banh/saved_plots/comparison_radar_chart.png)
+
+**Nhận xét:** Biểu đồ radar thể hiện rõ: **DQN** chiếm ưu thế tuyệt đối về Success Rate và Sample Efficiency; **PPO** vượt trội về Control Smoothness; **A2C** đứng đầu về Inference Speed (FPS).
+
+---
+
+### 4.4. Phân tích Góc Nghiêng Con Lắc θ(t) — Chất lượng Thăng Bằng
+
+**Hình 4.5 — Pole Angle θ(t): Ổn định thăng bằng trong suốt demo:**
+
+![Pole Angle θ(t) Comparison — Balance Stability](f:/ROBOT 2 Banh/saved_plots/comparison_pole_angles.png)
+
+**Bảng phân tích định lượng góc nghiêng:**
+
+| Thuật toán | $|\theta|_{max}$ | $\sigma_{\theta}$ (Std Dev) | Nhận xét |
+|---|:---:|:---:|---|
+| **DQN** | Thấp | Thấp | Góc nhỏ, điều khiển chính xác, ổn định nhất |
+| **PPO** | Thấp nhất | Thấp nhất | Mượt mà nhất, không vọt lố góc nghiêng |
+| **A2C** | Trung bình | Trung bình | Dao động nhẹ hơn trong phase di chuyển |
+
+**Nhận xét:** Cả 3 thuật toán đều duy trì $|\theta| \ll 35°$ trong toàn bộ hành trình từ Navigation đến Station-Keeping. Đây là bằng chứng rõ ràng rằng hàm phạt $-5.0 \cdot \theta^2$ trong hàm thưởng Gaussian đã ép buộc robot học giữ thẳng đứng ngay cả khi đang di chuyển.
+
+---
+
+### 4.5. Bảng Tổng Hợp Kết Quả
+
+**Hình 4.6 — Bảng tổng hợp trực quan 3 thuật toán:**
+
+![Summary Comparison Table](f:/ROBOT 2 Banh/saved_plots/comparison_summary_table.png)
+
+---
+
+### 4.6. Trực quan hóa Kết quả Ghi hình Demo (Visual Demonstrations)
+
+Các thuật toán sau khi huấn luyện được kiểm thử trên kịch bản điều khiển thực tế từ vị trí xa $x = 3.2\text{m}$ đến Target Zone $[5.25\text{m}, 6.75\text{m}]$:
+
+- **Giai đoạn 1 (Navigation):** Robot tạo góc nghiêng nhẹ về phía trước ($\theta \approx -5^\circ$), tăng tốc chạy từ $3.2\text{m}$ về $5.25\text{m}$.
+- **Giai đoạn 2 (Braking & Station-Keeping):** Ngay khi qua vạch $5.25\text{m}$, robot chủ động tạo lực ngược cản lại vận tốc ($F < 0$), trả góc con lắc về $0^\circ$ và đứng thăng bằng liên tục trong zone đủ 20 steps (hiển thị badge xanh `IN ZONE ✓`).
+
+---
+
+
+## 5. THẢO LUẬN VÀ HẠN CHẾ (DISCUSSION & LIMITATIONS)
+
+### 5.1. Thảo luận về bản chất thuật toán
+
+#### 5.1.1. Phân tích chi tiết từng thuật toán
 
 1. **DQN (Hội tụ nhanh nhất & Đạt tỷ lệ thắng tuyệt đối 100%):**
    - Nhờ có **Replay Buffer**, DQN tái sử dụng các mẫu dữ liệu thành công cực kỳ hiệu quả. Khi robot tìm được hành động hãm phanh đúng trong zone, thông tin này lập tức lan truyền trong Q-table giúp mạng học hãm phanh chỉ sau **300 episodes**.
-   - Mạng **Target Network** giúp giá trị Q-value không bị dao động nhiễu.
+   - Mạng **Target Network** giúp giá trị Q-value không bị dao động nhiễu, loại bỏ hiện tượng "moving target problem".
 
 2. **A2C kết hợp GAE (Hội tụ mượt và cân bằng):**
    - Kỹ thuật **GAE ($\lambda=0.95$)** và chuẩn hóa $returns\_norm$ đã giải quyết triệt để lỗi bùng nổ Critic Loss. 
@@ -232,20 +321,41 @@ Thực nghiệm được tiến hành trên môi trường mô phỏng Python 3.
 
 ---
 
-### 4.4. Trực quan hóa Kết quả Ghi hình Demo (Visual Demonstrations)
+#### 5.1.2. Bảng Phân tích Ưu/Nhược điểm Chi tiết
 
-Các thuật toán sau khi huấn luyện được kiểm thử trên kịch bản điều khiển thực tế từ vị trí xa $x = 3.2\text{m}$ đến Target Zone $[5.25\text{m}, 6.75\text{m}]$:
+**Bảng II: So sánh Ưu/Nhược điểm và Phạm vi Ứng dụng**
 
-- **Giai đoạn 1 (Navigation):** Robot tạo góc nghiêng nhẹ về phía trước ($\theta \approx -5^\circ$), tăng tốc chạy từ $3.2\text{m}$ về $5.25\text{m}$.
-- **Giai đoạn 2 (Braking & Station-Keeping):** Ngay khi qua vạch $5.25\text{m}$, robot chủ động tạo lực ngược cản lại vận tốc ($F < 0$), trả góc con lắc về $0^\circ$ và đứng thăng bằng liên tục trong zone đủ 20 steps (hiển thị badge xanh `IN ZONE ✓`).
+| Tiêu chí | DQN 🔵 | PPO 🟣 | A2C 🟢 |
+|---|---|---|---|
+| **Loại thuật toán** | Off-policy, Value-based | On-policy, Actor-Critic Clipped | On-policy, Actor-Critic |
+| **Nền tảng lý thuyết** | Q-Learning + Deep NN | Policy Gradient + Surrogate Loss | Policy Gradient + GAE |
+| ✅ **Ưu điểm 1** | Sample Efficiency rất cao | Không bao giờ sụp đổ chính sách | Inference FPS cao nhất (~2100) |
+| ✅ **Ưu điểm 2** | Tỷ lệ thắng tuyệt đối 100% | Lực điều khiển mượt nhất | Hội tụ nhanh thứ 2 (526 ep) |
+| ✅ **Ưu điểm 3** | Hội tụ cực nhanh (300 ep) | Chịu được môi trường phức tạp | GAE giảm phương sai hiệu quả |
+| ❌ **Nhược điểm 1** | Chỉ hỗ trợ Discrete Action | Hội tụ chậm nhất (2944 ep) | Variance cao hơn PPO |
+| ❌ **Nhược điểm 2** | Cần Replay Buffer (RAM) | Tốc độ FPS thấp nhất (~1400) | Không có cơ chế tái dùng data |
+| ❌ **Nhược điểm 3** | Không ổn định khi env phức tạp | Nhiều hyperparameter cần tune | Chính sách dễ sụp hơn PPO |
+| 🎯 **Phù hợp nhất khi** | Env rời rạc, cần train nhanh | Cần ổn định lâu dài, prod-ready | Cần real-time, FPS cao |
+| 📌 **Ứng dụng điển hình** | Game Atari, Robot path planning | Locomotion, Manipulation | Streaming real-time control |
 
 ---
 
-## 5. THẢO LUẬN VÀ HẠN CHẾ (DISCUSSION & LIMITATIONS)
+#### 5.1.3. Phân tích "Tại sao DQN thắng PPO về tốc độ trong bài toán này?"
+- Bài toán Robot 2 bánh có không gian hành động rời rạc nhỏ (11 lực). Thuật toán Value-based như DQN khai thác không gian rời rạc cực tốt khi kết hợp Replay Buffer. Ngược lại, PPO phải ước lượng phân bố xác suất Softmax và tính toán Surrogate Loss tốn thời gian tính toán hơn.
 
-### 5.1. Thảo luận về bản chất thuật toán
-- **Tại sao DQN lại thắng PPO về tốc độ trong bài toán này?** Bài toán Robot 2 bánh có không gian hành động rời rạc nhỏ (11 lực). Thuật toán Value-based như DQN khai thác không gian rời rạc cực tốt khi kết hợp Replay Buffer. Ngược lại, PPO phải ước lượng phân bố xác suất Softmax và tính toán Surrogate Loss tốn thời gian tính toán hơn.
-- **Vai trò của Hàm thưởng Gaussian:** Nếu sử dụng hàm thưởng khoảng cách thông thường $r = -|x - x_{goal}|$, robot thường lao qua zone với vận tốc cao. Hàm chuông Gaussian $25 \cdot e^{-1.2 |x - x_{center}|}$ đóng vai trò như một "hố tiềm năng" (potential well) thu hút robot giảm dần vận tốc khi tiến vào tâm mục tiêu.
+#### 5.1.4. Vai trò của Hàm thưởng Gaussian
+- Nếu sử dụng hàm thưởng khoảng cách thông thường $r = -|x - x_{goal}|$, robot thường lao qua zone với vận tốc cao. Hàm chuông Gaussian $25 \cdot e^{-1.2 |x - x_{center}|}$ đóng vai trò như một "hố tiềm năng" (potential well) thu hút robot giảm dần vận tốc khi tiến vào tâm mục tiêu.
+
+#### 5.1.5. Khuyến nghị Lựa chọn Thuật toán theo Ngữ cảnh
+
+| Ngữ cảnh ứng dụng | Thuật toán khuyến nghị | Lý do |
+|---|:---:|---|
+| **Prototype nhanh / Nghiên cứu** | **DQN** | Hội tụ chỉ 300 ep, dễ debug |
+| **Triển khai thực tế / Production** | **PPO** | Ổn định cao, không sụp đổ policy |
+| **Điều khiển real-time nhúng** | **A2C** | FPS cao nhất, latency thấp |
+| **Bài toán Continuous Action** | **PPO-Continuous / SAC** | DQN không hỗ trợ |
+
+---
 
 ### 5.2. Hạn chế của nghiên cứu (Limitations)
 1. **Khoảng cách Sim-to-Real (Khoảng cách giữa mô phỏng và thực tế):**

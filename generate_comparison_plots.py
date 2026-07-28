@@ -19,7 +19,7 @@ from models.actor_critic import ActorCriticNetwork
 
 PLOTS_DIR = "saved_plots"
 MODELS_DIR = "saved_models"
-ARTIFACTS_DIR = r"C:\Users\phuck\.gemini\antigravity-ide\brain\61c51315-aace-4226-beac-fdb454903ab5"
+ARTIFACTS_DIR = r"C:\Users\phuck\.gemini\antigravity-ide\brain\56497aa5-5d10-46fe-ab54-33c2c18a64c1"
 os.makedirs(PLOTS_DIR, exist_ok=True)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -244,6 +244,88 @@ def plot_4_training_curves():
     print(f"✓ Saved Figure 4: {p4}")
 
 
+def plot_5_pole_angles(trajectories):
+    """Hình 5: Đồ thị Góc nghiêng con lắc θ(t) — Phân tích Station-Keeping."""
+    fig, ax = plt.subplots(figsize=(10, 5))
+
+    # Danger zone lines
+    ax.axhline(35.0,  color='#FF1744', linestyle='--', linewidth=1.5, alpha=0.8, label='Fall Threshold (+35°)')
+    ax.axhline(-35.0, color='#FF1744', linestyle='--', linewidth=1.5, alpha=0.8, label='Fall Threshold (-35°)')
+    ax.axhspan(-5.0, 5.0, color='#00E676', alpha=0.12, label='Stable Zone (|θ| < 5°)')
+    ax.axhline(0, color='black', linestyle='-', linewidth=0.8, alpha=0.4)
+
+    for name, data in trajectories.items():
+        max_abs = np.max(np.abs(data["angle"]))
+        std_th  = np.std(data["angle"])
+        ax.plot(data["time"], data["angle"],
+                label=f'{name}  (|θ|_max={max_abs:.1f}°, σ={std_th:.2f}°)',
+                color=data["color"], linewidth=2.2)
+
+    ax.set_title("Pole Angle θ(t) Comparison — Balance Stability during Navigation & Station-Keeping",
+                 fontweight='bold', fontsize=12)
+    ax.set_xlabel("Time (seconds)", fontsize=11)
+    ax.set_ylabel("Pole Angle θ (degrees)", fontsize=11)
+    ax.set_ylim(-45, 45)
+    ax.set_xlim(0, 5.0)
+    ax.legend(loc='upper right', frameon=True)
+    ax.grid(True, alpha=0.3)
+
+    plt.tight_layout()
+    p5 = os.path.join(PLOTS_DIR, "comparison_pole_angles.png")
+    plt.savefig(p5, dpi=200)
+    plt.close()
+    print(f"✓ Saved Figure 5: {p5}")
+
+
+def plot_6_summary_table():
+    """Hình 6: Bảng tổng hợp kết quả dạng hình ảnh đẹp."""
+    fig, ax = plt.subplots(figsize=(12, 4))
+    ax.axis('off')
+
+    columns = ['Thuật toán', 'Loại', 'Success Rate', 'Episode hội tụ',
+               'Thời gian', 'FPS', 'Đặc điểm nổi bật']
+    rows = [
+        ['DQN 🏆',      'Off-policy\nValue-based',   '100.0%', '300 ep',   '0.2 phút', '~1800', 'Replay Buffer\nTarget Network'],
+        ['A2C + GAE',   'On-policy\nActor-Critic',    '90.0%',  '526 ep',   '0.3 phút', '~2100', 'GAE λ=0.95\nFPS cao nhất'],
+        ['PPO',         'On-policy\nClipped A-C',     '90.0%',  '2,944 ep', '2.5 phút', '~1400', 'Clipped ε=0.2\nỔn định nhất'],
+    ]
+
+    colors_row = [
+        ['#0078D7', '#E3F2FD', '#E8F5E9', '#FFF9C4', '#E3F2FD', '#E8F5E9', '#E3F2FD'],
+        ['#009944', '#E8F5E9', '#E8F5E9', '#FFF9C4', '#E8F5E9', '#E8F5E9', '#E8F5E9'],
+        ['#B400B4', '#F3E5F5', '#E8F5E9', '#FFF9C4', '#F3E5F5', '#F3E5F5', '#F3E5F5'],
+    ]
+
+    # Draw header
+    for j, col in enumerate(columns):
+        ax.text((j + 0.5) / len(columns), 0.92, col,
+                ha='center', va='center', fontsize=10, fontweight='bold',
+                transform=ax.transAxes,
+                bbox=dict(boxstyle='round,pad=0.3', facecolor='#263238', edgecolor='none'),
+                color='white')
+
+    # Draw rows
+    row_h = 0.26
+    for i, (row, crows) in enumerate(zip(rows, colors_row)):
+        y = 0.62 - i * row_h
+        for j, (cell, fc) in enumerate(zip(row, crows)):
+            color = 'white' if j == 0 else '#1A1A2E'
+            ax.text((j + 0.5) / len(columns), y, cell,
+                    ha='center', va='center', fontsize=9.5, fontweight='bold' if j == 0 else 'normal',
+                    transform=ax.transAxes, color=color,
+                    bbox=dict(boxstyle='round,pad=0.35', facecolor=fc if j != 0 else crows[0],
+                              edgecolor='#BDBDBD', linewidth=0.5))
+
+    ax.set_title('Bảng Tổng Hợp Kết Quả So Sánh 3 Thuật Toán DRL — Robot Hai Bánh Station-Keeping',
+                 fontweight='bold', fontsize=13, pad=20)
+
+    plt.tight_layout()
+    p6 = os.path.join(PLOTS_DIR, "comparison_summary_table.png")
+    plt.savefig(p6, dpi=200, bbox_inches='tight')
+    plt.close()
+    print(f"✓ Saved Figure 6: {p6}")
+
+
 def main():
     print("=" * 65)
     print("  ĐANG TẠO CÁC HÌNH ẢNH & ĐỒ THỊ SO SÁNH KHOA HỌC DRL")
@@ -255,10 +337,20 @@ def main():
     plot_2_control_forces(trajectories)
     plot_3_radar_chart()
     plot_4_training_curves()
+    plot_5_pole_angles(trajectories)
+    plot_6_summary_table()
 
     # Copy to artifacts directory
     import shutil
-    for fname in ["comparison_trajectories.png", "comparison_control_forces.png", "comparison_radar_chart.png", "comparison_training_curves.png"]:
+    all_plots = [
+        "comparison_trajectories.png",
+        "comparison_control_forces.png",
+        "comparison_radar_chart.png",
+        "comparison_training_curves.png",
+        "comparison_pole_angles.png",
+        "comparison_summary_table.png",
+    ]
+    for fname in all_plots:
         src = os.path.join(PLOTS_DIR, fname)
         dst = os.path.join(ARTIFACTS_DIR, fname)
         if os.path.exists(src):
@@ -266,7 +358,7 @@ def main():
             print(f"  ✓ Copied artifact: {dst}")
 
     print("=" * 65)
-    print("✓ ĐÃ HOÀN THÀNH TẠO VÀ LƯU TẤT CẢ 4 BẢNG ĐỒ THỊ KHOA HỌC!")
+    print("✓ ĐÃ HOÀN THÀNH TẠO VÀ LƯU TẤT CẢ 6 BẢNG ĐỒ THỊ KHOA HỌC!")
 
 
 if __name__ == "__main__":

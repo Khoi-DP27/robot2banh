@@ -56,7 +56,7 @@ Dự án nghiên cứu và so sánh **3 thuật toán DRL cốt lõi**:
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
 | 🥇 **DQN** | **100.0\%** 🏆 | **0.2 phút (12s)** 🏆 | **300 ep** 🏆 | ~1800 FPS | $7.8\text{N}$ (High Chatter) | $1.2\text{s}$ |
 | 🥈 **PPO** | **90.0\%** | **2.5 phút** | **2,944 ep** | ~1400 FPS | **3.2N (Mượt nhất)** 🏆 | **0.9s (Nhanh nhất)** 🏆 |
-| 🥉 **A2C (với GAE)** | **90.0\%** | **11.0 phút** | **3,811 ep** | **~2100 FPS (Nhanh nhất)** 🏆 | $5.1\text{N}$ | $1.5\text{s}$ |
+| 🥉 **A2C (với GAE)** | **90.0\%** | **0.3 phút (18s)** | **526 ep** | **~2100 FPS (Nhanh nhất)** 🏆 | $5.1\text{N}$ | $1.5\text{s}$ |
 
 ---
 
@@ -73,6 +73,12 @@ Dự án nghiên cứu và so sánh **3 thuật toán DRL cốt lõi**:
 
 ### 4. Biểu Đồ Ra-Đa Đánh Giá Đa Chiều (Radar Chart)
 ![Multi Metric Radar Chart](saved_plots/comparison_radar_chart.png)
+
+### 5. Góc Nghiêng Con Lắc θ(t) — Chất Lượng Thăng Bằng
+![Pole Angle Stability](saved_plots/comparison_pole_angles.png)
+
+### 6. Bảng Tổng Hợp Kết Quả Trực Quan
+![Summary Comparison Table](saved_plots/comparison_summary_table.png)
 
 ---
 
@@ -92,7 +98,7 @@ robot2banh/
 ├── train_dqn.py                  # Script train DQN
 ├── train_target_tracking.py      # Script train PPO
 ├── train_a2c.py                  # Script train A2C
-├── generate_comparison_plots.py  # Script vẽ 4 đồ thị khoa học
+├── generate_comparison_plots.py  # Script vẽ 6 đồ thị khoa học (thêm θ(t) & Summary Table)
 ├── record_combined_video.py      # Script xuất GIF/MP4 ghép 3 tầng
 ├── run_all.py                    # Script tự động chạy toàn bộ dự án
 ├── report_balance_bot_ieee.tex   # Báo cáo mã nguồn IEEE LaTeX 7 trang (MSSV: 23011839)
@@ -116,11 +122,11 @@ python run_all.py
 
 ### 3. Chạy từng script riêng lẻ
 ```bash
-python train_dqn.py                 # Huấn luyện DQN
+python train_dqn.py                  # Huấn luyện DQN
 python train_target_tracking.py      # Huấn luyện PPO
-python train_a2c.py                 # Huấn luyện A2C với GAE
-python generate_comparison_plots.py # Vẽ 4 đồ thị so sánh khoa học
-python record_combined_video.py     # Xuất video ghép 3 tầng HD
+python train_a2c.py                  # Huấn luyện A2C với GAE
+python generate_comparison_plots.py  # Vẽ 6 đồ thị so sánh khoa học
+python record_combined_video.py      # Xuất video ghép 3 tầng HD
 ```
 
 ---
