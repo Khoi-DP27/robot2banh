@@ -5,10 +5,10 @@
 
 # BÁO CÁO PHÂN TÍCH VÀ SO SÁNH CÁC THUẬT TOÁN HỌC MÁY TĂNG CƯỜNG SÂU (DQN, PPO, A2C) TRONG BÀI TOÁN ĐIỀU KHIỂN ROBOT HAI BÁNH TỰ CÂN BẰNG VÀ ĐỊNH VỊ VÙNG MỤC TIÊU (STATION-KEEPING)
 
-**Họ và tên sinh viên:** [CẦN BỔ SUNG: NGUYỄN VĂN A]  
-**Mã sinh viên:** [CẦN BỔ SUNG: 2301xxxx]  
-**Lớp / Chuyên ngành:** Kỹ thuật Điều khiển & Tự động hóa / AI & Robot  
-**Giảng viên hướng dẫn:** [CẦN BỔ SUNG: ThS. Vũ Hoàng Diệu]  
+**Họ và tên sinh viên:** DƯƠNG PHÚC KHÔI  
+**Mã sinh viên:** 23011839  
+**Lớp / Chuyên ngành:** K17 AI-RB(EL) / Kỹ thuật Điều khiển & Tự động hóa  
+**Giảng viên hướng dẫn:** ThS. Vũ Hoàng Diệu  
 **Đơn vị:** Trường Đại học Phenikaa / Khoa Điện - Điện tử  
 
 ---

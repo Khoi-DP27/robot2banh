@@ -1,70 +1,80 @@
-# 🤖 Robot 2 Bánh Tự Cân Bằng & Di Chuyển Bám Target
-> **Nghiên cứu, Triển khai và Đánh giá So sánh các Thuật toán Học Tăng Cường Sâu (DRL) với Bộ Điều Khiển PID trong Bài Toán Cân Bằng & Bám Target cho Robot 2 Bánh**
+# 🤖 Robot 2 Bánh Tự Cân Bằng & Station-Keeping Navigation
+> **So Sánh Đánh Giá Đa Chiều Giữa 3 Thuật Toán Học Tăng Cường Sâu (DRL): DQN, PPO và A2C với GAE trong Bài Toán Navigation & Station-Keeping**
 
 ---
 
 ## 📌 Tổng Quan Dự Án
 
-Dự án xây dựng môi trường mô phỏng động lực học vật lý (Gymnasium) cho **Robot 2 bánh tự cân bằng** dựa trên phương trình động lực học con lắc ngược Euler-Lagrange (Inverted Pendulum on Cart). 
+Dự án xây dựng môi trường mô phỏng động lực học vật lý Gymnasium cho **Robot 2 bánh tự cân bằng** dựa trên phương trình động lực học phi tuyến Euler-Lagrange. 
 
-Nhiệm vụ cốt lõi của Robot bao gồm **2 mục tiêu đồng thời**:
-1. **Giữ cân bằng đứng thẳng:** Duy trì góc nghiêng $\theta \approx 0^\circ$ (không đổ quá $\pm 20^\circ$).
-2. **Chủ động di chuyển tới điểm đích (Target Tracking):** Điều khiển vị trí $x$ chạy tiến/lùi tới điểm mục tiêu $x_{target}$ ngẫu nhiên trên đường đi.
+Robot phải hoàn thành **bài toán kép (Dual-Objective Task)**:
+1. **Tự động di chuyển (Navigation):** Xuất phát từ vị trí ngẫu nhiên ($x \in [3.0\text{m}, 5.0\text{m}]$) trên đường đua 8.0m, lái xe tiến tới Vùng Mục Tiêu (Target Zone $[5.25\text{m}, 6.75\text{m}]$ tâm $x=6.0\text{m}$).
+2. **Hãm phanh đứng im & Giữ cân bằng (Station-Keeping Hover):** Tự động dập tắt vận tốc, hãm phanh đứng im đúng tâm và duy trì thăng bằng đứng thẳng ($\theta < 35^\circ$) liên tục trong ít nhất 20 bước (0.4 giây).
+
+![3-in-1 Combined Comparison Video](saved_videos/target_tracking_combined.gif)
 
 ---
 
-## 🚀 Các Phương Pháp Điều Khiển Được Triển Khai
+## 🚀 3 Thuật Toán DRL Được Triển Khai & So Sánh
 
-Dự án triển khai và so sánh **5 phương pháp điều khiển**:
+Dự án nghiên cứu và so sánh **3 thuật toán DRL cốt lõi**:
 
-| STT | Phương pháp | Phân loại | Mô tả |
+| STT | Thuật toán | Phân loại DRL | Đặc trưng nổi bật |
 | :---: | :--- | :--- | :--- |
-| 1 | **PID Controller** | Baseline truyền thống | Bộ điều khiển PID kép (Dual-loop Cascaded PID) |
-| 2 | **DQN** | Value-based DRL | Deep Q-Network với Replay Buffer & Target Network |
-| 3 | **REINFORCE** | Policy-based DRL | Monte-Carlo Policy Gradient |
-| 4 | **A2C** | Actor-Critic | Synchronous Advantage Actor-Critic |
-| 5 | **PPO** | Advanced Policy DRL | Proximal Policy Optimization (Clipped Surrogate Objective) |
+| 1 | **DQN** | Value-based Off-policy | Deep Q-Network với Replay Buffer $50,000$ mẫu & Target Network |
+| 2 | **PPO** | Policy-gradient On-policy | Proximal Policy Optimization với Clipped Surrogate Objective ($\epsilon=0.2$) |
+| 3 | **A2C** | Actor-Critic On-policy | Synchronous Advantage Actor-Critic kết hợp Generalized Advantage Estimation (GAE $\lambda=0.95$) |
 
 ---
 
-## 🏆 Bảng Kết Quả Đánh Giá Tổng Hợp
+## 🏆 Bảng Kết Quả Thực Nghiệm Đa Chiều
 
-*(Được xuất từ script [compare_all.py](compare_all.py) trên 100 tập đánh giá độc lập)*
+| Thuật toán | Tỷ lệ thành công | Thời gian Train | Số Episode hội tụ | Tốc độ xử lý (FPS) | Độ mượt lực ($\sigma_F$) | Thời gian ổn định ($t_s$) |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| 🥇 **DQN** | **100.0\%** 🏆 | **0.2 phút (12s)** 🏆 | **300 ep** 🏆 | ~1800 FPS | $7.8\text{N}$ (High Chatter) | $1.2\text{s}$ |
+| 🥈 **PPO** | **90.0\%** | **2.5 phút** | **2,944 ep** | ~1400 FPS | **3.2N (Mượt nhất)** 🏆 | **0.9s (Nhanh nhất)** 🏆 |
+| 🥉 **A2C (với GAE)** | **90.0\%** | **11.0 phút** | **3,811 ep** | **~2100 FPS (Nhanh nhất)** 🏆 | $5.1\text{N}$ | $1.5\text{s}$ |
 
-| Thuật toán | Phân loại | Reward Eval | Số bước sống sót (/500) | Tỷ lệ sống sót |
-| :--- | :--- | :---: | :---: | :---: |
-| **PID** | Baseline | $+72.1 \pm 34.8$ | $123.1$ / $500$ | $0.0\%$ |
-| **DQN** | Value-based DRL | $+468.9 \pm 1.2$ | $500.0$ / $500$ | **$100.0\%$** |
-| **REINFORCE** | Policy Gradient | $+321.8 \pm 149.5$ | $451.1$ / $500$ | $65.0\%$ |
-| **A2C** | Actor-Critic | $+461.8 \pm 19.9$ | $500.0$ / $500$ | **$100.0\%$** |
-| **PPO** | Proximal Policy Opt | $+452.9 \pm 2.9$ | $500.0$ / $500$ | **$100.0\%$** |
+---
+
+## 📊 Đồ Thị So Sánh Khoa Học
+
+### 1. Đường Cong Hội Tụ Huấn Luyện (Victory Rate & Rewards)
+![Training Convergence Curves](saved_plots/comparison_training_curves.png)
+
+### 2. Quỹ Đạo Di Chuyển Thực Tế x(t)
+![Position Trajectories](saved_plots/comparison_trajectories.png)
+
+### 3. Độ Mượt Lực Điều Khiển F(t) & Chatter Động Cơ
+![Control Force Smoothness](saved_plots/comparison_control_forces.png)
+
+### 4. Biểu Đồ Ra-Đa Đánh Giá Đa Chiều (Radar Chart)
+![Multi Metric Radar Chart](saved_plots/comparison_radar_chart.png)
 
 ---
 
 ## 🗂️ Cấu Trúc Thư Mục Dự Án
 
 ```text
-F:\ROBOT 2 Banh\
-├── controllers/
-│   └── pid_controller.py        # Bộ điều khiển PID kép (Dual-loop)
+robot2banh/
 ├── envs/
-│   ├── balance_bot_env.py       # Môi trường Gymnasium cơ bản
-│   ├── balance_bot_target_env.py# Môi trường bám điểm Target (Cốt lõi)
-│   └── balance_bot_hard_env.py  # Môi trường Hard Mode (nhiễu, dốc, lực xô)
+│   └── balance_bot_target_env.py # Môi trường Gymnasium (Gaussian Potential Field & 50/50 Curriculum)
 ├── models/
-│   ├── dqn_model.py             # Mạng DQN
-│   ├── replay_buffer.py         # Replay Buffer cho DQN
-│   ├── policy_gradient.py      # Mạng REINFORCE
-│   ├── actor_critic.py         # Mạng A2C
-│   └── ppo.py                  # Mạng PPO
-├── train_target_tracking.py     # Huấn luyện PPO bài toán bám Target
-├── demo_target_tracking.py      # Demo chạy xe bám Target thực tế
-├── record_target_video.py       # Ghi hình Video HD 720p & GIF mô phỏng Target
-├── compare_all.py               # Script vẽ đồ thị so sánh 4 DRL vs PID
-├── benchmark_hard_mode.py       # Script kiểm thử độ bền vững (Robustness)
-├── record_videos.py             # Script xuất video tổng hợp các mô hình
-├── run_pid.py                   # Script kiểm thử PID Controller
-└── requirements.txt             # Khai báo các thư viện Python
+│   ├── dqn_model.py              # Mạng Neural DQN (Replay Memory)
+│   ├── ppo.py                    # Mạng Neural PPO (Clipped Objective)
+│   └── actor_critic.py           # Mạng Neural A2C (GAE Advantage Head)
+├── saved_models/                 # File trọng lượng mô hình đã train (.pth)
+├── saved_plots/                  # Đồ thị so sánh khoa học (.png)
+├── saved_videos/                 # Video MP4 & GIF mô phỏng 3 tầng (.gif)
+├── train_dqn.py                  # Script train DQN
+├── train_target_tracking.py      # Script train PPO
+├── train_a2c.py                  # Script train A2C
+├── generate_comparison_plots.py  # Script vẽ 4 đồ thị khoa học
+├── record_combined_video.py      # Script xuất GIF/MP4 ghép 3 tầng
+├── run_all.py                    # Script tự động chạy toàn bộ dự án
+├── report_balance_bot_ieee.tex   # Báo cáo mã nguồn IEEE LaTeX 7 trang (MSSV: 23011839)
+├── report_balance_bot_rl.md      # Báo cáo tiếng Việt Markdown
+└── requirements.txt              # Thư viện Python yêu cầu
 ```
 
 ---
@@ -72,36 +82,27 @@ F:\ROBOT 2 Banh\
 ## 💻 Hướng Dẫn Sử Dụng & Chạy Demo
 
 ### 1. Cài đặt môi trường
-Yêu cầu Python 3.8+ và các thư viện cần thiết:
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. CHẠY TỰ ĐỘNG TOÀN BỘ DỰ ÁN TRONG 1 CÂU LỆNH (Recommeded)
+### 2. Chạy tự động toàn bộ Dự án (Train, Vẽ đồ thị, Xuất Video)
 ```bash
 python run_all.py
 ```
-*(Script sẽ tự động train lần lượt 4 thuật toán, vẽ biểu đồ so sánh, xuất video HD 720p & GIF và chạy demo kết quả)*
 
-### 3. Chạy từng câu lệnh riêng lẻ
+### 3. Chạy từng script riêng lẻ
 ```bash
-python train_ppo.py              # Train PPO Hard Mode
-python train_target_tracking.py   # Train PPO Bám Target
-python compare_all.py             # Xuất bảng so sánh & đồ thị hội tụ
-python record_target_video.py    # Xuất Video HD & GIF 🚩
-python demo_target_tracking.py    # Chạy demo thực tế
+python train_dqn.py                 # Huấn luyện DQN
+python train_target_tracking.py      # Huấn luyện PPO
+python train_a2c.py                 # Huấn luyện A2C với GAE
+python generate_comparison_plots.py # Vẽ 4 đồ thị so sánh khoa học
+python record_combined_video.py     # Xuất video ghép 3 tầng HD
 ```
-
----
-
-## 🎬 Trực Quan Hóa Thực Nghiệm
-
-- 🎥 **Video Demo Bám Target:** `saved_videos/target_tracking_ppo.mp4` & `saved_videos/target_tracking_ppo.gif`
-- 📈 **Đồ thị Tiến trình Hội tụ:** `saved_plots/overall_convergence_comparison.png`
-- 🎯 **Đồ thị Huấn luyện Target Tracking:** `saved_plots/target_tracking_training.png`
-- 🛡️ **Đồ thị Đánh giá Độ bền vững (Hard Mode):** `saved_plots/hard_mode_benchmark.png`
 
 ---
 
 ## 📜 Giấy Phép & Tác Quyền
-Được phát triển phục vụ Bài tập lớn môn học Robot & Học Tăng Cường Sâu.
+- **Sinh viên thực hiện:** DUONG PHUC KHOI (MSSV: 23011839)
+- **Giảng viên hướng dẫn:** ThS. Vũ Hoàng Diệu
+- **Đơn vị:** Trường Điện - Điện tử, Đại học Phenikaa.
