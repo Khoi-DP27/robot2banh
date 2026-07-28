@@ -1,0 +1,16 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.tmp
+
+# Exclude zip archives if large
+# BaoCao_IEEE_Robot2Banh.zip
+# BaoCao_Robot2Banh_DRL.zip

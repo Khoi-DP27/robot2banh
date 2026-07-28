@@ -1,0 +1,10 @@
+# === Môi trường mô phỏng ===
+gymnasium==0.29.1        # Gym API hiện đại (kế thừa OpenAI Gym)
+
+# === Deep Learning ===
+torch>=2.0.0             # PyTorch - framework chính cho DRL
+numpy>=1.24.0            # Tính toán số học
+
+# === Trực quan hóa ===
+matplotlib>=3.7.0        # Vẽ biểu đồ
+pygame>=2.5.0            # Render môi trường mô phỏng (optional)
